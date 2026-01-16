@@ -1,5 +1,14 @@
 spring:
   profiles:
-    active: dev # Aqui você muda para 'prod' quando for subir para o Hostgator
+    active: test
   application:
     name: NomeProvisorioSite
+  
+  # Configuração de usuário padrão para desenvolvimento
+  security:
+    user:
+      name: admin
+      password: admin
+# Configuração comum para todos os perfis
+server:
+  port: 8080
