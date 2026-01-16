@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    active: dev # Aqui você muda para 'prod' quando for subir para o Hostgator
+  application:
+    name: NomeProvisorioSite
