@@ -1,0 +1,16 @@
+# Java
+target/
+*.class
+.settings/
+.classpath
+.project
+.factorypath
+
+# Angular
+node_modules/
+dist/
+.angular/
+
+# IDEs
+.vscode/
+.idea/
