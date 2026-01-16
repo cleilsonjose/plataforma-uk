@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import java.util.List;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -14,14 +16,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Desabilitado para facilitar testes iniciais
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(request -> {
+                var config = new CorsConfiguration();
+                config.setAllowedOrigins(List.of("http://localhost:4200")); // Libera o Angular
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                config.setAllowedHeaders(List.of("*"));
+                return config;
+            }))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/h2-console/**").permitAll() // Libera o banco H2
-                .anyRequest().authenticated() // Exige login para o resto
+                .requestMatchers("/h2-console/**", "/api/hello").permitAll() // Liberamos nosso teste
+                .anyRequest().authenticated()
             )
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())) // Necessário para o H2 aparecer no navegador
-            .formLogin(withDefaults()) // Ativa o formulário que você viu
-            .httpBasic(withDefaults()); // Permite autenticação básica (útil para o Postman)
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+            .formLogin(withDefaults());
             
         return http.build();
     }
