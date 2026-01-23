@@ -1,0 +1,37 @@
+.auth-wrapper {
+  display: flex; justify-content: center; align-items: center;
+  min-height: 100vh; background-color: #0f172a; // Cor do fundo UK Premium
+}
+
+.auth-card {
+  width: 100%; max-width: 420px;
+  background-color: #1e293b !important;
+  border-radius: 12px !important; padding: 24px;
+}
+
+.auth-header {
+  text-align: center; margin-bottom: 24px;
+  h1 { font-size: 2rem; color: #a78bfa; margin: 0; }
+  p { color: #94a3b8; font-size: 0.9rem; }
+}
+
+.full-width { width: 100%; margin-bottom: 8px; }
+
+.btn-auth {
+  width: 100%; height: 50px; margin-top: 16px;
+  background-color: #7c3aed !important; color: white !important;
+  font-weight: bold; border-radius: 8px !important;
+}
+
+::ng-deep .dark-field {
+  .mat-mdc-text-field-wrapper { background-color: rgba(15, 23, 42, 0.5) !important; }
+  .mat-mdc-form-field-error { color: #fb7185 !important; font-weight: 500; }
+  input { color: white !important; }
+  .mat-mdc-form-field-icon-suffix button { color: #a78bfa !important; }
+}
+
+.auth-footer {
+  margin-top: 24px; text-align: center;
+  span { color: #94a3b8; font-size: 0.85rem; }
+  a { color: #a78bfa; text-decoration: none; font-weight: 600; display: block; margin-top: 4px; }
+}

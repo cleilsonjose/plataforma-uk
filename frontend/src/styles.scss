@@ -1,4 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+// Import do Material (mantenha o que já existe)
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+:root {
+  --primary-color: #7c3aed; // Um roxo moderno
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --card-bg: #1e293b;
+  --text-main: #f8fafc;
+}
+
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: 'Poppins', Roboto, "Helvetica Neue", sans-serif; 
+}
+
+body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-main);
+}
+
+/* Reforço de largura total para componentes Material */
+mat-form-field.full-width {
+  width: 100% !important;
+}
+
+.mdc-text-field--filled {
+  width: 100% !important;
+}
+
+/* Garante que os ícones do Material se comportem como fontes de ícones */
+.material-icons {
+  font-family: 'Material Icons' !important;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
