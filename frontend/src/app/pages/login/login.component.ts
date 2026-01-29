@@ -6,7 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router'; // Adicionado Router
+import { AuthService } from '../../services/auth.service'; // Adicionado import do seu Service
 
 @Component({
   selector: 'app-login',
@@ -24,19 +25,49 @@ import { RouterLink } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
+
+// ... imports permanecem os mesmos
+
 export class LoginComponent {
   loginForm: FormGroup;
+  hide = true;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      // Lembre-se: 'senha' para casar com o seu Java Acompanhante.java
+      senha: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
+  // Este é o método que você pediu para adicionar
   entrar() {
     if (this.loginForm.valid) {
-      console.log('Dados enviados:', this.loginForm.value);
+      console.log('Dados capturados do formulário:', this.loginForm.value);
+      
+      // Agora chamamos a lógica real de autenticação
+      this.executarLogin();
+    } else {
+      alert('Please fill in the fields correctly.');
     }
   }
+
+  // Lógica que faz a ponte com o Backend
+  private executarLogin() {
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (res) => {
+        console.log('Login successful! Response from Java:', res);
+        this.router.navigate(['/welcome']); 
+      },
+      error: (err) => {
+        console.error('Login error:', err);
+        alert('Login failed! Check your email and password.');
+      }
+    });
+  }
 }
+

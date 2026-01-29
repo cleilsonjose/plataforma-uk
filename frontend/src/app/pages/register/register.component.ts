@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 /** Classe para forçar a exibição do erro de senhas diferentes no campo */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -22,7 +24,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   selector: 'app-register',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, 
+    CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule,
     MatInputModule, MatButtonModule, MatIconModule, RouterLink
   ],
   templateUrl: './register.component.html',
@@ -34,12 +36,12 @@ export class RegisterComponent {
   hideConfirmar = true;
   matcher = new MyErrorStateMatcher(); // Instância do matcher para o HTML
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService,  private router: Router) {
     this.registerForm = this.fb.group({
       nome: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.minLength(8),
         Validators.pattern(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
       ]],
@@ -55,9 +57,20 @@ export class RegisterComponent {
 
   registrar() {
     if (this.registerForm.valid) {
-      console.log('Sending to UK database...', this.registerForm.value);
-    } else {
-      this.registerForm.markAllAsTouched(); // Faz tudo brilhar vermelho se houver erro
+      // Pegamos os dados do formulário
+      const dados = this.registerForm.value;
+
+      this.authService.register(dados).subscribe({
+        next: (res) => {
+          console.log('Success! Registered in the database:', res);
+          alert('Account created successfully!');
+          this.router.navigate(['/welcome']);//<= adicionei aqui
+        },
+        error: (err) => {
+          console.error('Registration failed:', err);
+          alert('Error connecting to the server. Check the console.');
+        }
+      }); 
     }
   }
 }
