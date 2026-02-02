@@ -3,6 +3,8 @@ package com.plataforma.api.controller;
 import com.plataforma.api.model.Acompanhante;
 import com.plataforma.api.repository.AcompanhanteRepository; // Importe a Interface
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +18,16 @@ public class AcompanhanteController {
 	@PostMapping("/register")
 	public ResponseEntity<?> registrar(@RequestBody Acompanhante acompanhante) {
 	    try {
-	        // Salva a Julia (ou qualquer usuário) de verdade no banco H2
+	        // Encriptação de senha viria aqui no futuro
 	        Acompanhante salvo = repository.save(acompanhante);
-	        return ResponseEntity.ok(salvo);
+	        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+	    } catch (DataIntegrityViolationException e) {
+	        // Captura o erro de unique constraint do email
+	        return ResponseEntity.status(HttpStatus.CONFLICT)
+	                             .body("Registration failed: This email is already in use.");
 	    } catch (Exception e) {
-	        return ResponseEntity.status(500).body("Erro ao salvar: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body("Server error. Please try again later.");
 	    }
 	}
 

@@ -13,11 +13,11 @@ import { AuthService } from '../../services/auth.service'; // Adicionado import 
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    MatCardModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatButtonModule,
     MatIconModule,
     RouterLink
@@ -31,7 +31,7 @@ import { AuthService } from '../../services/auth.service'; // Adicionado import 
 export class LoginComponent {
   loginForm: FormGroup;
   hide = true;
-
+  errorMessage: string = '';
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -44,15 +44,18 @@ export class LoginComponent {
     });
   }
 
-  // Este é o método que você pediu para adicionar
   entrar() {
     if (this.loginForm.valid) {
-      console.log('Dados capturados do formulário:', this.loginForm.value);
-      
-      // Agora chamamos a lógica real de autenticação
-      this.executarLogin();
-    } else {
-      alert('Please fill in the fields correctly.');
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (res) => {
+          this.router.navigate(['/welcome']);
+        },
+        error: (err) => {
+          // Em vez de alert(), alimentamos a variável
+          this.errorMessage = 'Login failed! Check your email and password.';
+          console.error('Login error:', err);
+        }
+      });
     }
   }
 
@@ -61,7 +64,7 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         console.log('Login successful! Response from Java:', res);
-        this.router.navigate(['/welcome']); 
+        this.router.navigate(['/welcome']);
       },
       error: (err) => {
         console.error('Login error:', err);
