@@ -7,8 +7,8 @@
 
     <mat-card-content>
       <div class="social-login-row">
-        <button mat-stroked-button class="social-btn google">
-          <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google"> 
+        <button mat-stroked-button class="social-btn google" (click)="loginComGoogle()">
+          <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google Icon"> 
           Continue with Google
         </button>
       </div>
@@ -20,10 +20,10 @@
       <form [formGroup]="loginForm" (ngSubmit)="entrar()" class="luxury-form">
         <mat-form-field appearance="outline" class="full-width premium-field">
           <mat-label>Email Address</mat-label>
-          <input matInput formControlName="email" type="email">
+          <input matInput formControlName="email" type="email" placeholder="email@example.co.uk">
           <mat-icon matSuffix>mail</mat-icon>
           <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email is required</mat-error>
-          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Invalid email format</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width premium-field">
@@ -35,7 +35,9 @@
           <mat-error *ngIf="loginForm.get('senha')?.hasError('required')">Password is required</mat-error>
         </mat-form-field>
 
-        <p class="error-feedback" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <div class="error-feedback" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
 
         <div class="forgot-pass-container">
           <a routerLink="/forgot-password">Forgot password?</a>
@@ -46,5 +48,10 @@
         </button>
       </form>
     </mat-card-content>
-    </mat-card>
+
+    <div class="auth-footer">
+      <span>Not a member yet?</span>
+      <a routerLink="/register" class="link-gold">Join the elite</a>
+    </div>
+  </mat-card>
 </div>

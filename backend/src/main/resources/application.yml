@@ -2,13 +2,48 @@ spring:
   profiles:
     active: test
   application:
-    name: NomeProvisorioSite
+    name: UKPlatformAPI
   
-  # Configuração de usuário padrão para desenvolvimento
+  # Configuração de Segurança e Login Social
   security:
-    user:
-      name: admin
-      password: admin
-# Configuração comum para todos os perfis
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+
+  # Configuração do Banco de Dados H2 (Perfil de Teste)
+  datasource:
+    url: jdbc:h2:mem:ukdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # Configuração de erros (Movido para dentro do bloco spring)
+  web:
+    error:
+      include-message: always
+
+# Configurações do Servidor
 server:
   port: 8080
+
+# Logs para facilitar o debug durante a Sprint 1
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.plataforma.api: DEBUG

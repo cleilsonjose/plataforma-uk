@@ -1,37 +1,49 @@
 package com.plataforma.api.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+
+import com.plataforma.api.security.CustomOAuth2UserService;
+
 import java.util.List;
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(request -> {
-                var config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("http://localhost:4200")); // Libera o Angular
-                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                config.setAllowedHeaders(List.of("*"));
-                return config;
+                CorsConfiguration cfg = new CorsConfiguration();
+                cfg.setAllowedOrigins(List.of("http://localhost:4200"));
+                cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                cfg.setAllowedHeaders(List.of("*"));
+                cfg.setAllowCredentials(true);
+                return cfg;
             }))
             .authorizeHttpRequests(auth -> auth
-                // Liberamos tudo que começa com /api/acompanhantes/ para o público
-                .requestMatchers("/h2-console/**","/api/acompanhantes/**","/api/acompanhantes/login").permitAll()
+                .requestMatchers("/login/**", "/register/**", "/forgot-password/**", "/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-            .formLogin(withDefaults());
-            
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())) // Para o H2 Console funcionar
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .defaultSuccessUrl("http://localhost:4200/dashboard", true)
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+            );
+        
         return http.build();
     }
 }

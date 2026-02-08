@@ -33,14 +33,17 @@ public class AcompanhanteController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody Acompanhante credenciais) {
-		// Procura o acompanhante pelo email
-		Acompanhante acompanhante = repository.findByEmail(credenciais.getEmail());
-
-		// Verifica se existe e se a senha bate (estamos usando texto puro por enquanto)
-		if (acompanhante != null && acompanhante.getSenha().equals(credenciais.getSenha())) {
-			return ResponseEntity.ok(acompanhante); // Retorna o objeto se estiver tudo certo
-		}
-
-		return ResponseEntity.status(401).body("E-mail ou senha inválidos.");
+	    // Agora buscamos como Optional
+	    return repository.findByEmail(credenciais.getEmail())
+	        .map(acompanhante -> {
+	            // Se encontrou o e-mail, verifica a senha
+	            if (acompanhante.getSenha().equals(credenciais.getSenha())) {
+	                return ResponseEntity.ok(acompanhante);
+	            } else {
+	                return ResponseEntity.status(401).body("E-mail ou senha inválidos.");
+	            }
+	        })
+	        // Se o findByEmail retornar vazio (Optional.empty)
+	        .orElse(ResponseEntity.status(401).body("E-mail ou senha inválidos."));
 	}
 }

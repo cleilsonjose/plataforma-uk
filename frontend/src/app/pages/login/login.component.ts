@@ -59,6 +59,13 @@ export class LoginComponent {
     }
   }
 
+  loginComGoogle() {
+    // Para o MVP, redirecionamos para o fluxo de autenticação do Google via Java
+    // Ou usamos uma URL de teste
+    console.log('Redirecionando para Google OAuth2...');
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  }
+
   // Lógica que faz a ponte com o Backend
   private executarLogin() {
     this.authService.login(this.loginForm.value).subscribe({
